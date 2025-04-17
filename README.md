@@ -6,12 +6,12 @@ The code associated with our paper is currently being organized and will be rele
 ## Compression performance
 
 SolarZip demonstrated the overall best performance on the rate-distortion curve.
-![rate-distortion](figure/combined_rate_distortion.pdf)
+<img src="figure/combined_rate_distortion.png" alt="rate-distortion" style="width:70%;">
 
 ## Vision Example
 
 Full Solar Imager(FSI) dataset example:
-![FSI-example](figure/FSI_combined_results.png)
+<img src="figure/FSI_combined_results.png" alt="FSI-example" style="width:70%;">
 
 Hight Resolution Imager(HRI) dataset example:
-![HRI-example](figure/hri_vision_example.png)
+<img src="figure/hri_vision_example.png" alt="HRI-example" style="width:70%;">
