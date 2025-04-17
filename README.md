@@ -11,7 +11,8 @@ SolarZip demonstrated the overall best performance on the rate-distortion curve.
 ## Vision Example
 
 Full Solar Imager(FSI) dataset example:
-<img src="figure/FSI_combined_results.png" alt="FSI-example" style="width:70%;">
+
+<img src="figure/FSI_combined_results.png" alt="FSI-example" width="400;">
 
 Hight Resolution Imager(HRI) dataset example:
 <img src="figure/hri_vision_example.png" alt="HRI-example" style="width:70%;">
