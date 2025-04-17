@@ -1,8 +1,10 @@
 # SolarZip
 SolarZip：An efficient and adaptive compression framework for Sloar EUV data
 
-SolarZip achieving unprecedented compression ratios of up to 800× for FSI data and 500× for HRI$_{\text{EUV}}$ data—surpassing traditional algorithms by 3-50×. Our two-stage evaluation framework ensures that compressed data remains suitable for critical scientific research by integrating strict error control with downstream scientific workflows.
-The code associated with our paper is currently being organized and will be released shortly. In the meantime, we have made the test data publicly available. If you're interested, you can access it here: https://github.com/CapitalLiu/SolarZip-TestData
+SolarZip achieving unprecedented compression ratios of up to **800×** for FSI data and **500×** for HRI data—surpassing traditional algorithms by 3-50×. 
+Our two-stage evaluation framework ensures that compressed data remains suitable for critical scientific research.
+The code associated with our paper is currently being organized and will be released shortly. In the meantime, we have made the test data publicly available. If you're interested, you can access it here: 
+https://github.com/CapitalLiu/SolarZip-TestData
 
 ## Compression performance
 
