@@ -1,22 +1,22 @@
 # SolarZip
-SolarZip is a compression framework designed for solar Extreme Ultraviolet (EUV) imaging data. Its purpose is to efficiently and adaptively compress the vast amounts of observational data from solar missions while ensuring its scientific usability.
+SolarZip is a compression framework designed for solar Extreme Ultraviolet (EUV) imaging data. Its purpose is to efficiently and adaptively compress the vast amounts of observational data from solar missions while ensuring its scientific usability.🌞
 
-This framework is specifically optimized for data from the Solar Orbiter's Extreme Ultraviolet Imager (EUI) and can significantly reduce data volume, offering a promising data management solution for deep space missions like the Solar Orbiter.
+This framework is specifically optimized for data from the Solar Orbiter's Extreme Ultraviolet Imager (EUI) and can significantly reduce data volume, offering a promising data management solution for deep space missions like the Solar Orbiter.🚀
 
 
-## Key Feature
+## ✨Key Feature
 
 * **High-Efficiency Compression:** Achieves 3-50 times higher compression ratios compared to traditional algorithms.
 * **Adaptive Strategy:** Employs an adaptive hybrid compression strategy with optimized interpolation predictors.
 * **Scientific Usability:** Integrates a two-stage evaluation framework with distortion analysis and downstream scientific workflows to ensure that observational analysis is not affected, even at high compression ratios.
 * **Significant Results:** Achieved up to an 800x reduction for Full Sun Imager (FSI) data and a 500x reduction for High Resolution Imager (HRI_EUV) data.
 
-## Compression performance
+## 📊Compression performance
 
 SolarZip demonstrated the overall best performance on the rate-distortion curve.
 <img src="figure/combined_rate_distortion.png" alt="rate-distortion" style="width:70%;">
 
-## Vision Example
+## 👁️Vision Example
 
 ### Full Solar Imager(FSI) dataset example:
 
@@ -25,7 +25,7 @@ SolarZip demonstrated the overall best performance on the rate-distortion curve.
 ### Hight Resolution Imager(HRI) dataset example:
 <img src="figure/hri_vision_example.png" alt="HRI-example" style="width:70%;">
 
-## Build Instructions
+## ⚙️Build Instructions
 
 ### requisites
 Before you begin, ensure you have the following software and libraries installed:
@@ -75,9 +75,9 @@ Example Commands:
   ```
   ./bin/SolarZip 3 REL 1e-3 /SolarZip/data
   ```
-  We have made the test data publicly available. If you're interested, you can access it here: 
+  We have made the test data publicly available. If you're interested, you can access it here👉: 
 https://github.com/CapitalLiu/SolarZip-TestData
-## Citation
+## 📚Citation
 If you use SolarZip in your research, please cite our paper:
 ```
 @misc{liu2025solarzip,
