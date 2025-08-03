@@ -65,11 +65,11 @@ SolarZip -dim_num -bound_mode -bound_num <dataDir>
 Example Commands:
 * Relative error bound mode
   ```
-  ./bin/SolarZip 3 REL 1e-3 /SolarZip/example
+  ./bin/SolarZip 3 REL 1e-3 /SolarZip/data
   ```
 * Absolute error bound mode
   ```
-  ./bin/SolarZip 3 REL 1e-3 /SolarZip/example
+  ./bin/SolarZip 3 REL 1e-3 /SolarZip/data
   ```
 ## Citation
 If you use SolarZip in your research, please cite our paper:
