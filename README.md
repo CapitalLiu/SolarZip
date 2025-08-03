@@ -1,9 +1,15 @@
 # SolarZip
-SolarZip：An efficient and adaptive compression framework for Sloar EUV data
+SolarZip is a compression framework designed for solar Extreme Ultraviolet (EUV) imaging data. Its purpose is to efficiently and adaptively compress the vast amounts of observational data from solar missions while ensuring its scientific usability.
 
-SolarZip achieving unprecedented compression ratios of up to **800×** for FSI data and **500×** for HRI data—surpassing traditional algorithms by 3-50×. 
-Our two-stage evaluation framework ensures that compressed data remains suitable for critical scientific research.
+This framework is specifically optimized for data from the Solar Orbiter's Extreme Ultraviolet Imager (EUI) and can significantly reduce data volume, offering a promising data management solution for deep space missions like the Solar Orbiter.
 
+
+## Key Feature
+
+* **High-Efficiency Compression:** Achieves 3-50 times higher compression ratios compared to traditional algorithms.
+* **Adaptive Strategy:** Employs an adaptive hybrid compression strategy with optimized interpolation predictors.
+* **Scientific Usability:** Integrates a two-stage evaluation framework with distortion analysis and downstream scientific workflows to ensure that observational analysis is not affected, even at high compression ratios.
+* **Significant Results:** Achieved up to an 800x reduction for Full Sun Imager (FSI) data and a 500x reduction for High Resolution Imager (HRI_EUV) data.
 
 ## Compression performance
 
