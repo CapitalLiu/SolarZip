@@ -30,8 +30,8 @@ endif ()
 find_package(PkgConfig)
 
 configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/SZ3/version.hpp.in
-        ${CMAKE_CURRENT_BINARY_DIR}/include/SZ3/version.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/version.hpp.in
+        ${CMAKE_CURRENT_BINARY_DIR}/include/version.hpp)
 
 add_library(${PROJECT_NAME} INTERFACE)
 target_include_directories(
@@ -98,8 +98,8 @@ install(TARGETS ${PROJECT_NAME}
 )
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/include/SZ3/version.hpp"
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/SZ3/"
+        "${CMAKE_CURRENT_BINARY_DIR}/include/version.hpp"
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/"
 )
 install(EXPORT SZ3Targets NAMESPACE SZ3:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SZ3)
 include(CMakePackageConfigHelpers)
