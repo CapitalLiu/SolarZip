@@ -8,14 +8,14 @@
  *      See COPYRIGHT in top-level directory.
  */
 
+#ifndef _QCAT_COMPRESSIONANALYSIS_H
+#define _QCAT_COMPRESSIONANALYSIS_H
+
 #include <stdio.h>
 #include <stdint.h>
 #include <qcat_dataAnalysis.h>
 #include <Huffman.h>
 // #include <zstd.h>  // 注释掉 zstd 依赖
-
-#ifndef _QCAT_COMPRESSIONANALYSIS_H
-#define _QCAT_COMPRESSIONANALYSIS_H
 
 #define PDF_INTERVALS 10000
 #define AUTOCORR_SIZE 512
