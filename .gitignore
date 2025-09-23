@@ -1,0 +1,14 @@
+test.dat
+compressed.out
+perf.data*
+build
+debug
+cmake-build-debug
+cmake-build-release
+.idea
+install
+*.o
+*.a
+*.so
+CMakeFiles/
+CMakeCache.txt
