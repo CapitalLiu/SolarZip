@@ -20,7 +20,7 @@ extern "C" {
 
 //ByteToolkit.c
 struct compResult{
-    char   filePath[100];
+    char   filePath[512];
     double compression_ratio;
     double compression_time;
     double decompression_time;
