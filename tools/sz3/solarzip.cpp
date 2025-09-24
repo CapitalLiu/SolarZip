@@ -7,8 +7,8 @@
 #include "SZ3/api/sz.hpp"
 #include <chrono>
 #include <vector>
-#include <dirent.h> // 包含目录操作相关的函数和结构体
-#include <sys/stat.h> // 包含文件状态相关的函数和结构体
+#include <dirent.h> 
+#include <sys/stat.h> 
 #include "qcat/include/ByteToolkit.h"
 
 #define MAX_FILES 2048
@@ -22,7 +22,7 @@ struct config{
 };
 
 const char** getFileList(const char* dirPath, int *i) {
-    static const char* filePaths[MAX_FILES + 1]; // 存储文件路径的数组，最后一个元素为 NULL
+    static const char* filePaths[MAX_FILES + 1]; 
     size_t count = 0; // 记录文件数
 
     // 打开目录
@@ -254,7 +254,7 @@ void convertDatToFits(const char* fitspath, const char* decPath, struct config C
 	PyObject* arg = NULL;
     const char* str3 = decPath;
     string name = get_last_ten_chars(fitspath);
-    string path = "/root/expeData/sz3/deCompData/"+name+"_"+Config.algorithem+"_"+Config.errorMode+Config.N+".fits";
+    string path = "../../sz3/deCompData/"+name+"_"+Config.algorithem+"_"+Config.errorMode+Config.N+".fits";
 	const char* str4 = path.c_str();
 
 
@@ -287,10 +287,10 @@ void processCompression(char* argv[], const char* resultPath, const char* filena
     // 使用 strcpy 复制内容
     strcpy(inPath, resultPath); // 使用 c_str() 获取 const char*
     char cmpPath[100]; //这个名字改成从pathList中原文件名，后缀是.dat.sz
-     snprintf(cmpPath, sizeof(cmpPath), "/root/expeData/sz3/compData/%s_HDU%d.dat.sz", filename,index);
+     snprintf(cmpPath, sizeof(cmpPath), "../../sz3/compData/%s_HDU%d.dat.sz", filename,index);
     char *conPath = nullptr;                      
     char decPath[100] ;
-     snprintf(decPath, sizeof(cmpPath), "/root/expeData/sz3/binaryData/De_%s_HDU%d.dat", filename,index);
+     snprintf(decPath, sizeof(cmpPath), "../../sz3/binaryData/De_%s_HDU%d.dat", filename,index);
     bool delCmpPath = false;
     int binaryOutput = 1; //是否输出二进制
     float E = std::stof(argv[3]);
@@ -377,7 +377,7 @@ struct pathConfig processFile(const char* fitsPath,const char* binaryDir){
     char decPath[100];//用原文件名dat后缀
     int status = 0;  // 状态变量
     int hdu_count = 0; // HDU 数量
-    snprintf(decPath, sizeof(decPath), "/root/expeData/sz3/binaryData/De_%s", filename_pure.c_str()); 
+    snprintf(decPath, sizeof(decPath), "../../sz3/binaryData/De_%s", filename_pure.c_str()); 
 
     // 打开 FITS 文件
     PyRun_SimpleString("import sys");
@@ -418,16 +418,15 @@ void compressFile(char *argv[], const char* fitsPath,const char* binaryDir,
             processCompression(argv, datPath.c_str(), pc.filename_pure.c_str(), 5, &Config, naxes,j,&Result);
             ResultVector.push_back(Result);
         }
-    //这里将hdu_nnum传给他，就知道有几个文件
     convertDatToFits(fitsPath,pc.decPath, Config);
 }
-//example： ./SZ3 1 REL 1e-3 /root/expeData/EUI_data/fsiData2
+//example： ./SZ3 1 REL 1e-3 ../../EUI_data/fsiData2
 int main(int argc, char* argv[]){
     // WXAMPLE
     int errorBound = 5;
     struct config Config;
     std::vector<compResult> ResultVector;
-    const char* binaryDir = "/root/expeData/binaryData";
+    const char* binaryDir = "../../binaryData";
     char csvPath[100];
     const char* dataPath = argv[4];
     const char** PathList = nullptr;
@@ -457,7 +456,7 @@ int main(int argc, char* argv[]){
     }
       //记录实验数据到csv文件
     if(is_test==0){
-        sprintf(csvPath, "/root/expeData/sz3/%s_%s.csv", Config.errorMode.c_str(),Config.N.c_str());
+        sprintf(csvPath, "../../sz3/%s_%s.csv", Config.errorMode.c_str(),Config.N.c_str());
         FILE* csvFile = fopen(csvPath, "a");
         fprintf(csvFile, "filename,mode,tolerance,compression_ratio,compression_time,decompression_time,Min,Max,Range,MaxAbsoluteError,MaxRelativeError,MaxPWRelativeError,PSNR,NRMSE,NormErr,NormErrNorm,PearsonCoeff,SSIM\n");
         for(const compResult& Result : ResultVector){
