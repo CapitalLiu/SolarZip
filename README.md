@@ -80,7 +80,7 @@ Example Commands:
   ```
 * Absolute error bound mode
   ```
-  ./bin/SolarZip 3 REL 1e-3 /SolarZip/data
+  ./bin/SolarZip 3 ABS 1e-3 /SolarZip/data
   ```
   We have made the test data publicly available. If you're interested, you can access it here👉: 
 https://github.com/CapitalLiu/SolarZip-TestData
