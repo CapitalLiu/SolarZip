@@ -81,7 +81,7 @@ def convert_fits_to_dat(fits_file, dat_file, index):
             #file_name = f'{dat_file}/{filename}_HDU{index}.dat'
             file_name = f'{dat_file}/{filename}_HDU{index}.dat'
             if os.path.exists(file_name):
-                print(f"File {file_name} already exists, returning existing naxes")
+                
                 return naxes
             
             # 写入 .dat 文件
@@ -89,7 +89,12 @@ def convert_fits_to_dat(fits_file, dat_file, index):
                 output_file.write(binary_data)
             
             print(f"Shape of HDU {index} data: {data.shape}")
-            print(f"Successfully converted HDU {index} to {file_name}")
+            # 显示相对路径
+            if '/root/lzd/SolarZip/' in file_name:
+                rel_path = file_name.replace('/root/lzd/SolarZip/', '')
+            else:
+                rel_path = file_name
+            print(f"Successfully converted HDU {index} to {rel_path}")
             print(f"Final naxes: {naxes}")
             return naxes
             
@@ -97,7 +102,6 @@ def convert_fits_to_dat(fits_file, dat_file, index):
         print(f"错误：{e}")
         return 0
 def convert_dat_to_fits(old_fits_file,dat_file, fits_file):
-    print(old_fits_file)
     # 打开旧的 FITS 文件以获取头信息
     with fits.open(old_fits_file) as old_hdulist:
         # 确保有足够的 HDU
@@ -160,7 +164,28 @@ def convert_dat_to_fits(old_fits_file,dat_file, fits_file):
             hdu_list.append(hdu)
              
         hdu_list.writeto(fits_file,overwrite=True) 
-        print(f"Successfully converted {dat_file} to {fits_file}.")
+        # 显示相对路径
+        def simplify_path(path):
+            if '/root/lzd/SolarZip/' in path:
+                # 移除项目根目录前缀
+                rel_path = path.replace('/root/lzd/SolarZip/', '')
+                # 解析相对路径符号
+                while '/../' in rel_path:
+                    parts = rel_path.split('/')
+                    new_parts = []
+                    for part in parts:
+                        if part == '..':
+                            if new_parts:
+                                new_parts.pop()
+                        else:
+                            new_parts.append(part)
+                    rel_path = '/'.join(new_parts)
+                return rel_path
+            return path
+        
+        rel_dat_path = simplify_path(dat_file)
+        rel_fits_path = simplify_path(fits_file)
+        print(f"Successfully converted {rel_dat_path} to {rel_fits_path}.")
       
 def pAdd(a,b):
     c = a + b
