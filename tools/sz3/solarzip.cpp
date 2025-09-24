@@ -21,11 +21,73 @@ struct config{
     string algorithem;
 };
 
+// 辅助函数：设置Python路径为当前源文件所在目录
+void setPythonPathFromSourceFile() {
+    // 获取当前源文件的绝对路径
+    std::string sourceFilePath = __FILE__;
+    
+    // 提取目录路径
+    std::string::size_type pos = sourceFilePath.find_last_of("/\\");
+    std::string directoryPath = (pos != std::string::npos) ? sourceFilePath.substr(0, pos) : ".";
+    
+    // 设置Python路径
+    std::string pythonPathCommand = "import sys; sys.path.append('" + directoryPath + "')";
+    PyRun_SimpleString(pythonPathCommand.c_str());
+}
+
+// 辅助函数：获取相对于源文件的数据目录路径
+std::string getDataDirPath(const std::string& subDir) {
+    // 获取当前源文件的绝对路径
+    std::string sourceFilePath = __FILE__;
+    
+    // 提取源文件目录路径
+    std::string::size_type pos = sourceFilePath.find_last_of("/\\");
+    std::string sourceDir = (pos != std::string::npos) ? sourceFilePath.substr(0, pos) : ".";
+    
+    // 从源文件目录向上一级到项目根目录，然后进入data目录
+    // 源文件在 tools/sz3/ 目录下，所以需要向上一级到 tools/，再向上一级到项目根目录
+    std::string projectRoot = sourceDir + "/../../";
+    std::string dataDir = projectRoot + "data/" + subDir;
+    
+    return dataDir;
+}
+
+
+std::string getDisplayPath(const std::string& absolutePath) {
+    const std::string projectRoot = "/root/lzd/SolarZip/";
+    
+    if (absolutePath.find(projectRoot) == 0) {
+        std::string relativePart = absolutePath.substr(projectRoot.length());
+        
+        if (relativePart.find("/../") != std::string::npos) {
+
+            std::string resolvedPath = absolutePath;
+            size_t pos;
+            
+            while ((pos = resolvedPath.find("/../")) != std::string::npos) {
+                size_t prevSlash = resolvedPath.rfind('/', pos - 1);
+                if (prevSlash != std::string::npos) {
+                    resolvedPath = resolvedPath.substr(0, prevSlash) + resolvedPath.substr(pos + 3);
+                } else {
+                    break; 
+                }
+            }
+            
+            if (resolvedPath.find(projectRoot) == 0) {
+                return resolvedPath.substr(projectRoot.length());
+            }
+        } else {
+            return relativePart;
+        }
+    }
+    
+    return absolutePath;
+}
+
 const char** getFileList(const char* dirPath, int *i) {
     static const char* filePaths[MAX_FILES + 1]; 
-    size_t count = 0; // 记录文件数
+    size_t count = 0; 
 
-    // 打开目录
     DIR* dir = opendir(dirPath);
     if (!dir) {
         perror("Error opening directory");
@@ -34,21 +96,25 @@ const char** getFileList(const char* dirPath, int *i) {
 
     struct dirent* entry;
     while ((entry = readdir(dir)) != NULL) {
-        // 跳过 "." 和 ".."
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
             continue;
         }
 
-        // 构造完整路径
         char fullPath[4096];
         snprintf(fullPath, sizeof(fullPath), "%s/%s", dirPath, entry->d_name);
 
-        // 检查是否是文件
         struct stat pathStat;
         if (stat(fullPath, &pathStat) == 0 && S_ISREG(pathStat.st_mode)) {
-            // 分配内存并存储路径
-            filePaths[count] = strdup(fullPath);
-            count++;
+            // 只处理FITS文件
+            char* filename = strrchr(fullPath, '/');
+            if (filename == NULL) filename = (char*)fullPath;
+            else filename++;
+            
+            char* ext = strrchr(filename, '.');
+            if (ext != NULL && strcmp(ext, ".fits") == 0) {
+                filePaths[count] = strdup(fullPath);
+                count++;
+            }
 
             // 防止超过最大文件数
             if (count >= 2048) {
@@ -109,7 +175,7 @@ void compress(char *inPath, char *cmpPath, SZ3::Config conf, compResult* Result)
     
     printf("compression ratio = %.2f \n", compress_ratio);
     printf("compression time = %f\n", compress_time);
-    printf("compressed data file = %s\n", outputFilePath);
+    printf("compressed data file = %s\n", getDisplayPath(outputFilePath).c_str());
     Result->compression_ratio = compress_ratio;
     Result->compression_time = compress_time;
     try{
@@ -181,7 +247,7 @@ void decompress(char *inPath, char *cmpPath, char *decPath,
 
     printf("compression ratio = %f\n", conf.num * sizeof(T) * 1.0 / cmpSize);
     printf("decompression time = %f seconds.\n", compress_time);
-    printf("decompressed file = %s\n", outputFilePath);
+    printf("decompressed file = %s\n", getDisplayPath(outputFilePath).c_str());
 }
 
 void convertFitsToDat(const char* fitspath, const char* binaryDir, int index,long* naxes){
@@ -189,7 +255,7 @@ void convertFitsToDat(const char* fitspath, const char* binaryDir, int index,lon
  
 	//必须修改Python路径，否则会找不到Python模块
     PyRun_SimpleString("import sys");
-	PyRun_SimpleString("sys.path.append('SolarZip/tools/sz3')");
+	setPythonPathFromSourceFile();
  
 	PyObject* pModule = NULL;
 	PyObject* pFunc = NULL;
@@ -198,6 +264,7 @@ void convertFitsToDat(const char* fitspath, const char* binaryDir, int index,lon
 	pModule = PyImport_ImportModule("fits2bina");//模块文件名
     //找不到模块则报错
 	if (pModule == nullptr) {
+		printf("Failed to import fits2bina module\n");
 		PyErr_Print();
 		Py_Finalize();
         return;
@@ -237,7 +304,7 @@ void convertDatToFits(const char* fitspath, const char* decPath, struct config C
     /*调用Python将解压后的dat文件转化为Fits文件*/
 	//必须修改Python路径，否则会找不到Python模块
     PyRun_SimpleString("import sys");
-	PyRun_SimpleString("sys.path.append('SolarZip/tools/sz3')");
+	setPythonPathFromSourceFile();
  
 	PyObject* Module = NULL;
  
@@ -245,6 +312,7 @@ void convertDatToFits(const char* fitspath, const char* decPath, struct config C
 	Module = PyImport_ImportModule("fits2bina");//模块文件名
     //找不到模块则报错
 	if (Module == nullptr) {
+		printf("Failed to import fits2bina module in convertDatToFits\n");
 		PyErr_Print();
 		Py_Finalize();
 		return;
@@ -254,7 +322,8 @@ void convertDatToFits(const char* fitspath, const char* decPath, struct config C
 	PyObject* arg = NULL;
     const char* str3 = decPath;
     string name = get_last_ten_chars(fitspath);
-    string path = "../../sz3/deCompData/"+name+"_"+Config.algorithem+"_"+Config.errorMode+Config.N+".fits";
+    string deCompDataDir = getDataDirPath("deCompData");
+    string path = deCompDataDir + "/" + name + "_" + Config.algorithem + "_" + Config.errorMode + Config.N + ".fits";
 	const char* str4 = path.c_str();
 
 
@@ -283,14 +352,17 @@ void convertDatToFits(const char* fitspath, const char* decPath, struct config C
 }
 
 void processCompression(char* argv[], const char* resultPath, const char* filename, int N, struct config* Config, long* naxes,int index,compResult *Result){
-    char inPath[100]; // 声明一个字符数组
+    char inPath[512]; // 声明一个字符数组
     // 使用 strcpy 复制内容
     strcpy(inPath, resultPath); // 使用 c_str() 获取 const char*
-    char cmpPath[100]; //这个名字改成从pathList中原文件名，后缀是.dat.sz
-     snprintf(cmpPath, sizeof(cmpPath), "../../sz3/compData/%s_HDU%d.dat.sz", filename,index);
+    string compDataDir = getDataDirPath("compData");
+    string binaryDataDir = getDataDirPath("binaryData");
+    
+    char cmpPath[512]; //这个名字改成从pathList中原文件名，后缀是.dat.sz
+     snprintf(cmpPath, sizeof(cmpPath), "%s/%s_HDU%d.dat.sz", compDataDir.c_str(), filename,index);
     char *conPath = nullptr;                      
-    char decPath[100] ;
-     snprintf(decPath, sizeof(cmpPath), "../../sz3/binaryData/De_%s_HDU%d.dat", filename,index);
+    char decPath[512] ;
+     snprintf(decPath, sizeof(decPath), "%s/De_%s_HDU%d.dat", binaryDataDir.c_str(), filename,index);
     bool delCmpPath = false;
     int binaryOutput = 1; //是否输出二进制
     float E = std::stof(argv[3]);
@@ -363,7 +435,7 @@ struct pathConfig{
     string filename;
     string filename_pure;
     string datPath;
-    char decPath[100];
+    char decPath[512];
     int hdu_num;
 };
 struct pathConfig processFile(const char* fitsPath,const char* binaryDir){
@@ -372,23 +444,25 @@ struct pathConfig processFile(const char* fitsPath,const char* binaryDir){
     string filename = pathObj.filename().string();
     string filename_pure = pathObj.stem().string();
     string datPath = (std::filesystem::path(binaryDir)/(filename)).string();
-    cout<<datPath<<endl;
     long naxes[4]={0};
-    char decPath[100];//用原文件名dat后缀
+    string binaryDataDir = getDataDirPath("binaryData");
+    char decPath[512];//用原文件名dat后缀
     int status = 0;  // 状态变量
     int hdu_count = 0; // HDU 数量
-    snprintf(decPath, sizeof(decPath), "../../sz3/binaryData/De_%s", filename_pure.c_str()); 
+    snprintf(decPath, sizeof(decPath), "%s/De_%s", binaryDataDir.c_str(), filename_pure.c_str()); 
 
     // 打开 FITS 文件
     PyRun_SimpleString("import sys");
-	PyRun_SimpleString("sys.path.append('/root/SZ-source/SolarZip/tools/sz3/')");
+	setPythonPathFromSourceFile();
     PyObject* Module = NULL;
     //import模块
 	Module = PyImport_ImportModule("fits2bina");//模块文件名
     PyObject* pCov = NULL;
 	PyObject* arg = NULL;
     if(!Module){
-        cout<<"Module not found"<<endl;
+        printf("Failed to import fits2bina module in processFile\n");
+        PyErr_Print();
+        return pc;
     }
 
     pCov = PyObject_GetAttrString(Module, "count_hdu");
@@ -418,16 +492,18 @@ void compressFile(char *argv[], const char* fitsPath,const char* binaryDir,
             processCompression(argv, datPath.c_str(), pc.filename_pure.c_str(), 5, &Config, naxes,j,&Result);
             ResultVector.push_back(Result);
         }
+    //这里将hdu_nnum传给他，就知道有几个文件
     convertDatToFits(fitsPath,pc.decPath, Config);
 }
-//example： ./SZ3 1 REL 1e-3 ../../EUI_data/fsiData2
+//example： ./SZ3 1 REL 1e-3 /root/expeData/EUI_data/fsiData2
 int main(int argc, char* argv[]){
     // WXAMPLE
     int errorBound = 5;
     struct config Config;
     std::vector<compResult> ResultVector;
-    const char* binaryDir = "../../binaryData";
-    char csvPath[100];
+    string binaryDataDir = getDataDirPath("binaryData");
+    const char* binaryDir = binaryDataDir.c_str();
+    char csvPath[512];
     const char* dataPath = argv[4];
     const char** PathList = nullptr;
     int count = 0;
@@ -456,7 +532,8 @@ int main(int argc, char* argv[]){
     }
       //记录实验数据到csv文件
     if(is_test==0){
-        sprintf(csvPath, "../../sz3/%s_%s.csv", Config.errorMode.c_str(),Config.N.c_str());
+        string csvDataDir = getDataDirPath("");
+        sprintf(csvPath, "%s/%s_%s.csv", csvDataDir.c_str(), Config.errorMode.c_str(),Config.N.c_str());
         FILE* csvFile = fopen(csvPath, "a");
         fprintf(csvFile, "filename,mode,tolerance,compression_ratio,compression_time,decompression_time,Min,Max,Range,MaxAbsoluteError,MaxRelativeError,MaxPWRelativeError,PSNR,NRMSE,NormErr,NormErrNorm,PearsonCoeff,SSIM\n");
         for(const compResult& Result : ResultVector){
