@@ -1,4 +1,11 @@
 # SolarZip: A Efficient Error-bounded Lossy Compression Framework for Soalr EUV Data
+
+[![C++ Version](https://img.shields.io/badge/C++-17%2B-blue.svg)](https://isocpp.org/) 
+[![License](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0) 
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/elasticmm/elasticmm) 
+[![Documentation](https://img.shields.io/badge/docs-latest-darkblue.svg)](https://elasticmm.readthedocs.io/) 
+
+
 SolarZip is a compression framework designed for solar Extreme Ultraviolet (EUV) imaging data. Its purpose is to efficiently and adaptively compress the vast amounts of observational data from solar missions while ensuring its scientific usability.🌞
 
 This framework is specifically optimized for data from the Solar Orbiter's Extreme Ultraviolet Imager (EUI) and can significantly reduce data volume, offering a promising data management solution for deep space missions like the Solar Orbiter.🚀
